@@ -3,4 +3,4 @@ project(AlgorithmsAndApplication)
 
 set(CMAKE_CXX_STANDARD 11)
 
-add_executable(AlgorithmsAndApplication main.cpp red_black_tree/red_black_tree.h red_black_tree/red_black_tree.cpp)
+add_executable(${PROJECT_NAME} main.cpp)
