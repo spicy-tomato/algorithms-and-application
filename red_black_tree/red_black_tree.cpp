@@ -1,32 +1,25 @@
 #include <iostream>
+#include "red_black_tree_node.cpp"
+#include "red_black_tree_iterator.cpp"
 
 #ifndef RED_BLACK_TREE
 #define RED_BLACK_TREE
 
+template<class Key>
+class invalid_key : public std::runtime_error {
+    public:
+        explicit invalid_key(Key key);
+};
+
+template<class Key>
+invalid_key<Key>::invalid_key(Key key)  : std::runtime_error(key + " is not a valid key") { }
+
 template<class Key, class Value>
 class RedBlackTree {
     private:
-        // Static constants
-        static const bool RED   = true;
-        static const bool BLACK = false;
+        typedef RedBlackTreeNode<Key, Value> Node;
 
-        // Inner class
-        class Node {
-            public:
-                // Node's props
-                Key   key;
-                Value value;
-                Node* left  = nullptr;
-                Node* right = nullptr;
-                int   N     = 0;
-                bool  color = RED;
-
-                // Node's constructor
-                Node(Key key, Value value, int N, bool color);
-
-                void assign(Node* node);
-        };
-
+    private:
         // Props
         Node* root = nullptr;
 
@@ -45,7 +38,7 @@ class RedBlackTree {
 
         bool isBlack(Node* head);
 
-        Node* insert(Node*& head, Key key, Value value);
+        Node* insert(Node*& head, Key key, Value value, Node* parent = nullptr);
 
         Node* erase(Node* head, Key key);
 
@@ -64,6 +57,8 @@ class RedBlackTree {
         Node* min(Node* head);
 
     public:
+        typedef RedBlackTreeIterator<Key, Value> iterator;
+
         // Constructor
         RedBlackTree();
 
@@ -71,11 +66,21 @@ class RedBlackTree {
         ~RedBlackTree();
 
         // Methods
+        iterator max();
+
+        iterator min();
+
+        iterator begin();
+
+        iterator end();
+
         int size();
 
-        int isEmpty();
+        bool empty();
 
         Value get(Key key);
+
+        Value& find(Key key);
 
         void insert(Key key, Value value);
 
@@ -89,25 +94,39 @@ class RedBlackTree {
 };
 
 template<class Key, class Value>
-RedBlackTree<Key, Value>::Node::Node(Key key, Value value, int N, bool color) {
-    this->key   = key;
-    this->value = value;
-    this->N     = N;
-    this->color = color;
-}
-
-template<class Key, class Value>
-void RedBlackTree<Key, Value>::Node::assign(Node* node) {
-    key   = node->key;
-    value = node->value;
-}
-
-template<class Key, class Value>
 RedBlackTree<Key, Value>::RedBlackTree() = default;
 
 template<class Key, class Value>
 RedBlackTree<Key, Value>::~RedBlackTree() {
     clear();
+}
+
+template<class Key, class Value>
+typename RedBlackTree<Key, Value>::iterator RedBlackTree<Key, Value>::max() {
+    if (empty()) {
+        return end();
+    }
+
+    return iterator(root->max());
+}
+
+template<class Key, class Value>
+typename RedBlackTree<Key, Value>::iterator RedBlackTree<Key, Value>::min() {
+    if (empty()) {
+        return end();
+    }
+
+    return iterator(root->min());
+}
+
+template<class Key, class Value>
+typename RedBlackTree<Key, Value>::iterator RedBlackTree<Key, Value>::begin() {
+    return min();
+}
+
+template<class Key, class Value>
+typename RedBlackTree<Key, Value>::iterator RedBlackTree<Key, Value>::end() {
+    return iterator();
 }
 
 template<class Key, class Value>
@@ -118,11 +137,17 @@ typename RedBlackTree<Key, Value>::Node* RedBlackTree<Key, Value>::rotateLeft(Re
 
     Node* x = head->right;
 
-    head->right = x->left;
-    x->left     = head;
+    head->right         = x->left;
+    x->left             = head;
+
+    x->parent           = head->parent;
+    head->parent        = x;
+    if (head->right != nullptr) {
+        head->right->parent = head;
+    }
 
     x->color    = head->color;
-    head->color = RED;
+    head->color = Node::RED;
 
     x->N    = head->N;
     head->N = size(head->left) + size(head->right) + 1;
@@ -137,11 +162,17 @@ typename RedBlackTree<Key, Value>::Node* RedBlackTree<Key, Value>::rotateRight(R
     }
     Node* x = head->left;
 
-    head->left = x->right;
-    x->right   = head;
+    head->left         = x->right;
+    x->right           = head;
+
+    x->parent          = head->parent;
+    head->parent       = x;
+    if (head->left != nullptr) {
+        head->left->parent = head;
+    }
 
     x->color    = head->color;
-    head->color = RED;
+    head->color = Node::RED;
 
     x->N    = head->N;
     updateSize(head);
@@ -151,8 +182,8 @@ typename RedBlackTree<Key, Value>::Node* RedBlackTree<Key, Value>::rotateRight(R
 
 template<class Key, class Value>
 void RedBlackTree<Key, Value>::flipColors(RedBlackTree<Key, Value>::Node* head) {
-    head->color       = RED;
-    head->left->color = head->right->color = BLACK;
+    head->color       = Node::RED;
+    head->left->color = head->right->color = Node::BLACK;
 }
 
 template<class Key, class Value>
@@ -168,7 +199,7 @@ int RedBlackTree<Key, Value>::updateSize(RedBlackTree::Node* head) {
 
 template<class Key, class Value>
 bool RedBlackTree<Key, Value>::isRed(RedBlackTree<Key, Value>::Node* head) {
-    return head != nullptr && head->color == RED;
+    return head != nullptr && head->color == Node::RED;
 }
 
 template<class Key, class Value>
@@ -177,13 +208,13 @@ bool RedBlackTree<Key, Value>::isBlack(RedBlackTree<Key, Value>::Node* head) {
 }
 
 template<class Key, class Value>
-typename RedBlackTree<Key, Value>::Node* RedBlackTree<Key, Value>::insert(RedBlackTree<Key, Value>::Node*& head, Key key, Value value) {
+typename RedBlackTree<Key, Value>::Node* RedBlackTree<Key, Value>::insert(RedBlackTree<Key, Value>::Node*& head, Key key, Value value, RedBlackTree<Key, Value>::Node* parent) {
     if (head == nullptr) {
-        return new Node(key, value, 1, RED);
+        return new Node(key, value, 1, Node::RED, parent);
     }
 
-    if      (key < head->key) head->left  = insert(head->left , key, value);
-    else if (key > head->key) head->right = insert(head->right, key, value);
+    if      (key < head->key) head->left  = insert(head->left , key, value, head);
+    else if (key > head->key) head->right = insert(head->right, key, value, head);
     else     head->value = value;
 
     if (isRed(head->right) && isBlack(head->left))     head = rotateLeft(head);
@@ -325,7 +356,7 @@ int RedBlackTree<Key, Value>::size() {
 }
 
 template<class Key, class Value>
-int RedBlackTree<Key, Value>::isEmpty() {
+bool RedBlackTree<Key, Value>::empty() {
     return size() == 0;
 }
 
@@ -349,47 +380,66 @@ Value RedBlackTree<Key, Value>::get(Key key) {
 }
 
 template<class Key, class Value>
+Value& RedBlackTree<Key, Value>::find(Key key) {
+    Node* curr = root;
+    while (curr != nullptr) {
+        if (key == curr->key) {
+            return (Value&) (curr->value);
+        }
+
+        if (key < curr->key) {
+            curr = curr->left;
+        }
+        else {
+            curr = curr->right;
+        }
+    }
+
+    throw invalid_key<Key>(key);
+}
+
+template<class Key, class Value>
 void RedBlackTree<Key, Value>::insert(Key key, Value value) {
     root = insert(root, key, value);
-    root->color = BLACK;
+    root->color = Node::BLACK;
 }
 
 template<class Key, class Value>
 void RedBlackTree<Key, Value>::erase(Key key) {
     if (isBlack(root->left) && isBlack(root->right)) {
-        root->color = RED;
+        root->color = Node::RED;
     }
 
     root = erase(root, key);
 
-    if (!isEmpty()) {
-        root->color = BLACK;
+    if (!empty()) {
+        root->color = Node::BLACK;
     }
 }
 
 template<class Key, class Value>
 void RedBlackTree<Key, Value>::eraseMin() {
     if (isBlack(root->left) && isBlack(root->right)) {
-        root->color = RED;
+        root->color = Node::RED;
     }
 
     root = eraseMin(root);
 
-    if (!isEmpty()) {
-        root->color = BLACK;
+    if (!empty()) {
+        root->color = Node::BLACK;
     }
 }
 
 template<class Key, class Value>
 void RedBlackTree<Key, Value>::eraseMax() {
     if (isBlack(root->left) && isBlack(root->right)) {
-        root->color = RED;
+        root->color = Node::RED;
     }
 
     root = eraseMax(root);
 
-    if (!isEmpty()) {
-        root->color = BLACK;
+    if (!empty()) {
+        root->color = Node::BLACK;
     }
 }
 

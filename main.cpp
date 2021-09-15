@@ -1,20 +1,17 @@
 #include <iostream>
-#include "red_black_tree/red_black_tree.cpp"
-#include <map>
+#include "map/map.cpp"
 
 int main() {
-    RedBlackTree<int, int> tree;
-
-    for (int i = 0; i < 5; ++i) {
-        tree.insert(i, i*i);
-    }
-
-    std::cout << tree.get(2) << '\n';
-    std::cout << tree.size() << '\n';
-    tree.erase(3);
-    std::cout << tree.size() << '\n';
-
-    std::map<int, int> m;
+//    Map<int, int> m;
+//
+//    for (int i = 0; i < 6; ++i) {
+//        m[i] = i * 2;
+//        m.insert(-i, i*i);
+//    }
+//
+//    for (auto i = m.begin(); i != m.end(); ++i) {
+//        std::cout << i.first << ": " << i.second << '\n';
+//    }
 
     return 0;
 }
