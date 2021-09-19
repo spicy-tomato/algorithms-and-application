@@ -1,5 +1,4 @@
 #include <iterator>
-//#include "red_black_tree_node.cpp"
 
 #ifndef RED_BLACK_TREE_ITERATOR
 #define RED_BLACK_TREE_ITERATOR
@@ -48,16 +47,16 @@ void RedBlackTreeIterator<Key, Value>::update() {
 }
 
 template<class Key, class Value>
-typename RedBlackTreeIterator<Key, Value>::Node& RedBlackTreeIterator<Key, Value>::operator*() {
-    return iterator;
-}
-
-template<class Key, class Value>
 RedBlackTreeIterator<Key, Value>::RedBlackTreeIterator(Node* iterator) {
     this->iterator = iterator;
     if (iterator != nullptr) {
         update();
     }
+}
+
+template<class Key, class Value>
+typename RedBlackTreeIterator<Key, Value>::Node& RedBlackTreeIterator<Key, Value>::operator*() {
+    return iterator;
 }
 
 template<class Key, class Value>

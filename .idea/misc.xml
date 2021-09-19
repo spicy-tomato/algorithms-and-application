@@ -3,6 +3,8 @@
   <component name="CMakeWorkspace" PROJECT_DIR="$PROJECT_DIR$" />
   <component name="CidrRootsConfiguration">
     <sourceRoots>
+      <file path="$PROJECT_DIR$/heap" />
+      <file path="$PROJECT_DIR$/priority_queue" />
       <file path="$PROJECT_DIR$/red_black_tree" />
     </sourceRoots>
   </component>
