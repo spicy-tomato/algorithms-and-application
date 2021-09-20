@@ -85,8 +85,12 @@ void Heap<Key>::insert(Key v) {
 
 template<class Key>
 Key Heap<Key>::remove() {
+    if (empty()) {
+        return NULL;
+    }
+
     Key max = queue[1];
-    swap(1, queue.size() - 1);
+    swap(1, size());
     queue.pop_back();
     sink(1);
 
