@@ -39,9 +39,9 @@ class Dictionary:
     def __query(self, word: str) -> (Optional[str], Optional[str]):
         curr = self.root
 
-        for char in word:
+        for i, char in enumerate(word):
             char = char.lower()
-            if curr.children[char] is None:
+            if curr.children[char] is None or (curr.children[char].meaning is None and i == len(word) - 1):
                 return None, None
             curr = curr.children[char]
 
@@ -58,6 +58,6 @@ dictionary.insert("by", "(danh từ) gần, cạnh, kế, bên")
 dictionary.insert("bye", "(thán từ) Chào tạm biệt")
 dictionary.insert("their", "(tính từ sở hữu) của chúng, của chúng nó, của họ")
 
-for wordSearch in ["thei"]:
+for wordSearch in ["the", "their", "thei"]:
     _word, _meaning = dictionary.search(wordSearch)
-    print("{0}: {1}".format(_word, _meaning))
+    print("{0} -> {1}: {2}".format(wordSearch, _word, _meaning))
