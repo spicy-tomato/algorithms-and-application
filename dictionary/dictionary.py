@@ -58,6 +58,6 @@ dictionary.insert("by", "(danh từ) gần, cạnh, kế, bên")
 dictionary.insert("bye", "(thán từ) Chào tạm biệt")
 dictionary.insert("their", "(tính từ sở hữu) của chúng, của chúng nó, của họ")
 
-for wordSearch in ["the", "thE", "their", "thei"]:
+for wordSearch in ["thei"]:
     _word, _meaning = dictionary.search(wordSearch)
     print("{0}: {1}".format(_word, _meaning))
