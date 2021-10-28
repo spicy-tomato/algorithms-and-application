@@ -41,7 +41,7 @@ class Dictionary:
 
         for char in word:
             char = char.lower()
-            if curr.children[char] is None or curr.children[char].meaning is None:
+            if curr.children[char] is None:
                 return None, None
             curr = curr.children[char]
 
