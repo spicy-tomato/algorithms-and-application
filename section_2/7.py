@@ -23,7 +23,6 @@ Thì đầu ra có dạng rotOrange(matrix) = -1
 
 def rot_orange(mat: [[int]]):
     good = 0
-    result = 0
     rows = len(mat)
     cols = len(mat[0])
     queue = []
