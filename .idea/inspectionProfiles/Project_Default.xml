@@ -6,6 +6,7 @@
         <list>
           <option value="libs.*" />
           <option value="dictionary.dictionary.Node" />
+          <option value="list.pop" />
         </list>
       </option>
     </inspection_tool>
