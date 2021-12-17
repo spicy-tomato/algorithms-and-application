@@ -29,7 +29,8 @@ def run():
             freq[c] += 1
         else:
             freq[c] = 1
-    nodes = sorted(freq.items(), key=lambda x: x[1], reverse=True)
+    freq = sorted(freq.items(), key=lambda x: x[1], reverse=True)
+    nodes = freq
     while len(nodes) > 1:
         key1, c1 = nodes[-1]
         key2, c2 = nodes[-2]
