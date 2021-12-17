@@ -1,6 +1,3 @@
-import sys
-
-
 def solve(arr: list[int], scope: int) -> list[int]:
     max_in_scope = arr[0]
     max_index = 0
