@@ -1,13 +1,11 @@
 def hash_table_linear(arr: [int], n) -> [int]:
     res = [None for _ in range(n)]
     for num in arr:
+        i = 0
         m = num % n
-        while m < n and res[m] is not None:
-            m += 1
-        if m >= n:
-            m = 0
-            while m < n and res[m] is not None:
-                m += 1
+        while res[m] is not None:
+            i += 1
+            m = (m + i) % n
         res[m] = num
     return res
 
