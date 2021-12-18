@@ -85,11 +85,18 @@ class BinaryTree:
         return self.root.search(idx)
 
     def remove(self, idx: str) -> bool:
-        if self.root is None:
-            return False
-        if self.root is None or self.root is None:
-            self.root = None
+        if self.root.value.idx == idx:
+            if self.root is None:
+                return False
+            if self.root.left is None and self.root.right is None:
+                self.root = None
+                return True
+            if self.root.left is not None:
+                self.root = self.root.left
+                return True
+            self.root = self.root.right
             return True
+
         return self.root.remove(idx)
 
 
