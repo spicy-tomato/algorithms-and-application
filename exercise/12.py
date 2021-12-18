@@ -3,7 +3,7 @@ import random
 # 3x + 2y + z + q = 34
 # 1 <= x, y, z, q <= 20
 
-# Define Number of generations
+# Define number of generations
 n_generation = 1000
 
 # Define the population size
@@ -21,13 +21,13 @@ r_reproduce = 0.18
 # Gene size
 n_gene = 4
 
-# constraint values of chromosome
+# Constraint values of chromosome
 max_chromosome = 20
 min_chromosome = 1
 
 
 def objective(gene: list[int]) -> int:
-    # f(x, y, z, q) = | 3x + 2y + z + q | - 34
+    # f(x, y, z, q) = | 3x + 2y + z + q | - 34 -> 0
     return abs(3 * gene[0] + 2 * gene[1] + gene[2] + gene[3] - 34)
 
 
@@ -35,7 +35,7 @@ def init() -> list[list[int]]:
     population: list[list[int]] = []
     for i in range(n_population):
         population.append([])
-        for j in range(n_gene):
+        for _ in range(n_gene):
             r = random.randint(min_chromosome, max_chromosome)
             population[i].append(r)
 
@@ -76,16 +76,16 @@ def mutation(gene: list[int]) -> None:
         gene[index] = new_value
 
 
-def genetic_algorithm() -> [[], int, int]:
+def genetic_algorithm() -> (list[int], int, int):
     population = init()
-    best_generation = 0
+    best_generation: list[int] = []
     best_value = objective(population[0])
     gen = 0
 
     for gen in range(n_generation):
         print('\nGen', gen + 1)
         for i in range(n_population):
-            print('\t{:2}: {:>3}\t{}'.format(i+1, objective(population[i]), population[i]))
+            print('\t{:2}: {:>3}\t{}'.format(i + 1, objective(population[i]), population[i]))
 
         children: list[list[int]] = []
 
@@ -111,7 +111,7 @@ def genetic_algorithm() -> [[], int, int]:
         if best_value == 0:
             break
 
-    return [best_generation, best_value, gen + 1]
+    return best_generation, best_value, gen + 1
 
 
 best, val, g = genetic_algorithm()
