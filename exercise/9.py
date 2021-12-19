@@ -15,7 +15,7 @@ def insert(word: str, root: Node) -> None:
         if curr.children[idx] is None:
             curr.children[idx] = Node()
         curr = curr.children[idx]
-    curr.isLeaf = True
+    curr.is_leaf = True
 
 
 def create_trie(words: [str], root: Node) -> None:
