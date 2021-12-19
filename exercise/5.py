@@ -5,11 +5,9 @@ def get_sum(s: str) -> int:
 def hash_table_linear(arr: [tuple[str, str]], n) -> [int]:
     res = [None for _ in range(n)]
     for pair in arr:
-        i = 0
         m = get_sum(pair[0]) % n
         while res[m] is not None:
-            i += 1
-            m = (m + i) % n
+            m = (m + 1) % n
         res[m] = pair
     return res
 
