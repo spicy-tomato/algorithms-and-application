@@ -1,43 +1,42 @@
 a = [1, 4, 1, 2, 7, 1, 2, 5, 3, 6]
-tanxuat = []
-caonhat = []
-cuoicung = []
+freq = []
+mode = []
+last = []
 
 
-def fillmang():
+def fill_array():
     for i in range(10):
-        tanxuat.append(0)
-        cuoicung.append(0)
+        freq.append(0)
+        last.append(0)
 
 
-def timtanxuat():
-    fillmang()
-    tmp = 0
+def find_freq():
+    fill_array()
     for i in a:
-        tanxuat[i] += 1
-    tmp = max(tanxuat)
-    for i in range(len(tanxuat)):
-        if tanxuat[i] == tmp:
-            caonhat.append(i)
+        freq[i] += 1
+    tmp = max(freq)
+    for i in range(len(freq)):
+        if freq[i] == tmp:
+            mode.append(i)
 
 
-def countingsort():
+def counting_sort():
     for i in range(1, len(a)):
-        tanxuat[i] += tanxuat[i - 1]
+        freq[i] += freq[i - 1]
     for i in range(len(a)):
-        cuoicung[tanxuat[a[i]] - 1] = a[i]
-        tanxuat[a[i]] -= 1
+        last[freq[a[i]] - 1] = a[i]
+        freq[a[i]] -= 1
 
 
 def run():
-    timtanxuat()
-    countingsort()
-    print(cuoicung)
-    print("mốt", caonhat)
-    if len(cuoicung) % 2 == 0:
-        print("Phan tu trung vi", (cuoicung[0] + cuoicung[len(cuoicung) - 1]) / 2)
+    find_freq()
+    counting_sort()
+    print(last)
+    print("Mot", mode)
+    if len(last) % 2 == 0:
+        print("Trung vi", (last[0] + last[len(last) - 1]) / 2)
     else:
-        print("Phan tu trung vi", cuoicung[int(len(cuoicung) / 2)])
+        print("Trung vi", last[int(len(last) / 2)])
 
 
 run()
